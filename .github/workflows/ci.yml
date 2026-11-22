@@ -1,0 +1,23 @@
+name: Verify public reference
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Run reference tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Run Node reference tests
+        run: node --test tests/reference.test.mjs
+      - name: Verify static assets
+        run: python scripts/verify_showcase.py
